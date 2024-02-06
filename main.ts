@@ -2,8 +2,10 @@ led.enable(false);
 radio.setGroup(1)
 
 /*
-    P8 : Digital IO => Direction Left / right
-    P12: Digital IO => Start / Stop
+A1  P8 : Digital IO => Direction Left / right
+A2  P12: Digital IO => Start / Stop
+A3  P16: Digital IO => Start / Stop
+
 A4  P16: Digital IO => Skiftespor
 B1  P3 : Digital IO => Skiftespor
 B2  P4 : Digital IO => Skiftespor
@@ -32,16 +34,43 @@ let endStop2Flagged: boolean = false;
 let endStop2Ack: boolean = false;
 let endStop2Time: number = 0;
 
+let direction : number = 0
+
+
+function GoReverse() {
+    switch (direction) {
+        case 1:
+            GoWest;
+            break;
+        case -1:
+            GoEast;
+            break;
+    }
+}
+
+function GoWest() {
+    stop() // Sluk strøm
+    pins.digitalWritePin(DigitalPin.P8, 1)  // Byt polaritet
+    pins.digitalWritePin(DigitalPin.P16, 0) // Byt polaritet
+    basic.pause(300)
+//    images.arrowImage(ArrowNames.West).showImage(0)
+    start() // Tænd strøm
+    direction = -1;
+}
+
+function GoEast() {
+    stop() // Sluk strøm
+    pins.digitalWritePin(DigitalPin.P8, 0)  // Byt polaritet
+    pins.digitalWritePin(DigitalPin.P16, 1) // Byt polaritet
+
+    basic.pause(300)
+ //   images.arrowImage(ArrowNames.East).showImage(0)
+    start() // Tænd strøm
+    direction = 1;
+}
+
 function a1(enable: number) {
     pins.digitalWritePin(DigitalPin.P12, enable)
-}
-
-function a23(enable: number) {
-    pins.digitalWritePin(DigitalPin.P8, enable)
-}
-
-function a4(enable: number) {
-    pins.digitalWritePin(DigitalPin.P16, enable)
 }
 
 function b1(enable: number) {
@@ -58,6 +87,14 @@ function b3(enable: number) {
 
 function b4(enable: number) {
     pins.digitalWritePin(DigitalPin.P10, enable)
+}
+
+function stop() {
+    pins.digitalWritePin(DigitalPin.P12, 0) // Sluk strøm
+}
+
+function start() {
+    pins.digitalWritePin(DigitalPin.P12, 0) // Tænd strøm
 }
 
 
@@ -98,23 +135,17 @@ function b4(enable: number) {
 
 radio.onReceivedString(function(receivedString: string) {
     switch(receivedString){
+        case "start":
+            start()
+            break;
+        case "stop":
+            stop()
+            break;
         case "a1off":
             a1(off)
             break;
         case "a1on":
             a1(on)
-            break;
-        case "a2off":
-            a23(off)
-            break;
-        case "a2on":
-            a23(on)
-            break;
-        case "a4off":
-            a4(off)
-            break;
-        case "a4on":
-            a4(on)
             break;
         case "b1off":
             b1(off)
