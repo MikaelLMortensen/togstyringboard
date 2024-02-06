@@ -13,9 +13,9 @@ B2  P4 : Digital IO => Skiftespor
 B3  P7 : Digital IO => Blok A
 B4  P10: Digital IO => Blok B
 
-    P0: endStop
-    P1: endstopRight
-    P2: endstopLeft
+P0: endStop
+P1: endstopRight
+P2: endstopLeft
 
 */
 
@@ -37,6 +37,7 @@ let endStop2Time: number = 0;
 let direction : number = 0
 let stopped : boolean = true;
 
+stop();
 
 function GoReverse() {
     switch (direction) {
@@ -54,7 +55,6 @@ function GoWest() {
     pins.digitalWritePin(DigitalPin.P8, 1)  // Byt polaritet
     pins.digitalWritePin(DigitalPin.P16, 0) // Byt polaritet
     basic.pause(300)
-//    images.arrowImage(ArrowNames.West).showImage(0)
     start() // Tænd strøm
     direction = -1;
 }
@@ -63,15 +63,13 @@ function GoEast() {
     stop() // Sluk strøm
     pins.digitalWritePin(DigitalPin.P8, 0)  // Byt polaritet
     pins.digitalWritePin(DigitalPin.P16, 1) // Byt polaritet
-
     basic.pause(300)
- //   images.arrowImage(ArrowNames.East).showImage(0)
     start() // Tænd strøm
     direction = 1;
 }
 
-function a1(enable: number) {
-    pins.digitalWritePin(DigitalPin.P12, enable)
+function a4(enable: number) {
+    pins.digitalWritePin(DigitalPin.P16, enable)
 }
 
 function b1(enable: number) {
@@ -96,7 +94,7 @@ function stop() {
 }
 
 function start() {
-    pins.digitalWritePin(DigitalPin.P12, 0) // Tænd strøm
+    pins.digitalWritePin(DigitalPin.P12, 1) // Tænd strøm
     stopped = true
 }
 
@@ -143,11 +141,11 @@ radio.onReceivedString(function(receivedString: string) {
         case "stop":
             stop()
             break;
-        case "a1off":
-            a1(off)
+        case "a4off":
+            a4(off)
             break;
-        case "a1on":
-            a1(on)
+        case "a4on":
+            a4(on)
             break;
         case "b1off":
             b1(off)
@@ -223,3 +221,42 @@ radio.onReceivedString(function(receivedString: string) {
 
 // //    HandleEvent();
 // })
+
+
+
+input.onButtonPressed(Button.A, function() {
+    GoEast()
+})
+
+input.onButtonPressed(Button.B, function () {
+    GoWest()
+})
+
+input.onButtonPressed(Button.AB, function () {
+    stop()
+
+    a4(on)
+    basic.pause(500)
+
+    b1(on)
+    basic.pause(500)
+    b2(on)
+    basic.pause(500)
+    b3(on)
+    basic.pause(500)
+    b4(on)
+    basic.pause(500)
+
+    a4(off)
+    basic.pause(500)
+    b1(off)
+    basic.pause(500)
+    b2(off)
+    basic.pause(500)
+    b3(off)
+    basic.pause(500)
+    b4(off)
+    basic.pause(500)
+
+
+})
