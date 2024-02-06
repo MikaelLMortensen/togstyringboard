@@ -2,9 +2,9 @@ led.enable(false);
 radio.setGroup(1)
 
 /*
-A1  P8 : Digital IO => Direction Left / right
-A2  P12: Digital IO => Start / Stop
-A3  P16: Digital IO => Start / Stop
+A1  P12: Digital IO => Start / Stop
+A2  P8 : Digital IO => Skift polaritet
+A3  P8 : Digital IO => Skift polaritet
 
 A4  P16: Digital IO => Skiftespor
 B1  P3 : Digital IO => Skiftespor
@@ -35,6 +35,7 @@ let endStop2Ack: boolean = false;
 let endStop2Time: number = 0;
 
 let direction : number = 0
+let stopped : boolean = true;
 
 
 function GoReverse() {
@@ -91,47 +92,48 @@ function b4(enable: number) {
 
 function stop() {
     pins.digitalWritePin(DigitalPin.P12, 0) // Sluk strøm
+    stopped = true
 }
 
 function start() {
     pins.digitalWritePin(DigitalPin.P12, 0) // Tænd strøm
+    stopped = true
 }
 
+basic.forever(function () {
 
- basic.forever(function () {
- 
-     if (pins.digitalReadPin(DigitalPin.P0) && !endStop0Ack && control.millis() > endStop0Time + 50) {
-        endStop0Flagged = true 
-        endStop0Time = control.millis()
-        radio.sendNumber(0)
-     } else {
-         endStop0Flagged = false
-         endStop0Ack = false
-         endStop0Time = 0
-     }
+    if (pins.digitalReadPin(DigitalPin.P0) && !endStop0Ack && control.millis() > endStop0Time + 50) {
+    endStop0Flagged = true 
+    endStop0Time = control.millis()
+    radio.sendNumber(0)
+    } else {
+        endStop0Flagged = false
+        endStop0Ack = false
+        endStop0Time = 0
+    }
 
-     if (pins.digitalReadPin(DigitalPin.P1) && !endStop1Ack && control.millis() > endStop1Time + 50) {
-         endStop1Flagged = true
-         endStop1Time = control.millis()
-         radio.sendNumber(1)
-     } else {
-         endStop1Flagged = false
-         endStop1Ack = false
-         endStop1Time = 0
-     }
+    if (pins.digitalReadPin(DigitalPin.P1) && !endStop1Ack && control.millis() > endStop1Time + 50) {
+        endStop1Flagged = true
+        endStop1Time = control.millis()
+        radio.sendNumber(1)
+    } else {
+        endStop1Flagged = false
+        endStop1Ack = false
+        endStop1Time = 0
+    }
 
-     if (pins.digitalReadPin(DigitalPin.P2) && !endStop2Ack && control.millis() > endStop1Time + 50) {
-         endStop2Flagged = true
-         endStop1Time = control.millis()
-         radio.sendNumber(2)
-     }
-     else {
-         endStop1Flagged = false
-         endStop1Ack = false
-         endStop1Time = 0
-     }
- 
- })   
+    if (pins.digitalReadPin(DigitalPin.P2) && !endStop2Ack && control.millis() > endStop1Time + 50) {
+        endStop2Flagged = true
+        endStop1Time = control.millis()
+        radio.sendNumber(2)
+    }
+    else {
+        endStop1Flagged = false
+        endStop1Ack = false
+        endStop1Time = 0
+    }
+
+})   
 
 radio.onReceivedString(function(receivedString: string) {
     switch(receivedString){
