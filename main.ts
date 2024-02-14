@@ -34,35 +34,33 @@ let endStop2Flagged: boolean = false;
 let endStop2Ack: boolean = false;
 let endStop2Time: number = 0;
 
-let direction : number = 0
+let direction : number = 1
 let stopped : boolean = true;
 
 stop();
 
-function GoReverse() {
+function reverse() {
     switch (direction) {
         case 1:
-            GoWest;
+            west();
             break;
         case -1:
-            GoEast;
+            east();
             break;
     }
 }
 
-function GoWest() {
+function west() {
     stop() // Sluk strøm
     pins.digitalWritePin(DigitalPin.P8, 1)  // Byt polaritet
-    pins.digitalWritePin(DigitalPin.P16, 0) // Byt polaritet
     basic.pause(300)
     start() // Tænd strøm
     direction = -1;
 }
 
-function GoEast() {
+function east() {
     stop() // Sluk strøm
     pins.digitalWritePin(DigitalPin.P8, 0)  // Byt polaritet
-    pins.digitalWritePin(DigitalPin.P16, 1) // Byt polaritet
     basic.pause(300)
     start() // Tænd strøm
     direction = 1;
@@ -135,6 +133,15 @@ basic.forever(function () {
 
 radio.onReceivedString(function(receivedString: string) {
     switch(receivedString){
+        case "east":
+            east()
+            break;
+        case "west":
+            west()
+            break;
+        case "reverse":
+            reverse()
+            break;
         case "start":
             start()
             break;
@@ -185,78 +192,38 @@ radio.onReceivedString(function(receivedString: string) {
 })
 
 
-//     a1(on)
-//     basic.pause(500)
-//     a23(on)
-//     basic.pause(500)
-//     a4(on)
-//     basic.pause(500)
-
-//     b1(on)
-//     basic.pause(500)
-//     b2(on)
-//     basic.pause(500)
-//     b3(on)
-//     basic.pause(500)
-//     b4(on)
-//     basic.pause(500)
-
-//     a1(off)
-//     basic.pause(500)
-//     a23(off)
-//     basic.pause(500)
-//     a4(off)
-//     basic.pause(500)
-
-//     b1(off)
-//     basic.pause(500)
-//     b2(off)
-//     basic.pause(500)
-//     b3(off)
-//     basic.pause(500)
-//     b4(off)
-//     basic.pause(500)
-
-
-
-// //    HandleEvent();
-// })
-
-
-
 input.onButtonPressed(Button.A, function() {
-    GoEast()
+    east()
 })
 
 input.onButtonPressed(Button.B, function () {
-    GoWest()
+    west()
 })
 
 input.onButtonPressed(Button.AB, function () {
-    stop()
 
-    a4(on)
-    basic.pause(500)
+    reverse()
 
-    b1(on)
-    basic.pause(500)
-    b2(on)
-    basic.pause(500)
-    b3(on)
-    basic.pause(500)
-    b4(on)
-    basic.pause(500)
+    // b1(on)
+    // basic.pause(500)
+    // b2(on)
+    // basic.pause(500)
+    // b3(on)
+    // basic.pause(500)
+    // b4(on)
+    // basic.pause(500)
 
-    a4(off)
-    basic.pause(500)
-    b1(off)
-    basic.pause(500)
-    b2(off)
-    basic.pause(500)
-    b3(off)
-    basic.pause(500)
-    b4(off)
-    basic.pause(500)
+    // a4(off)
+    // basic.pause(500)
+    // b1(off)
+    // basic.pause(500)
+    // b2(off)
+    // basic.pause(500)
+    // b3(off)
+    // basic.pause(500)
+    // b4(off)
+    // basic.pause(500)
 
+    // stop()
 
 })
